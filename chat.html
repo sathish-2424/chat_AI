@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink AI Assistant</title>
+    <link rel="stylesheet" href="pink.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background decorative elements -->
+    <div class="background-layers">
+        <div class="lay-cen"></div>
+        <div class="layer"></div>
+    </div>
+
+    <main class="main">
+        <!-- Left Sidebar -->
+        <aside class="left">
+            <div class="left-end">
+                <div class="logo">
+                    <img src="robot.jpg" alt="Pink AI Logo">
+                </div>
+            </div>
+            <div class="set">
+                <i id="settings-toggle" class='bx bx-dots-horizontal-rounded' title="Settings"></i>
+                <nav class="sets" id="settings-menu">
+                    <a href="#" class="set-list" id="clear-chat-btn">
+                        <i class='bx bx-trash'></i><span>Clear Chat</span>
+                    </a>
+                    <a href="#" class="set-list" id="export-chat-btn">
+                        <i class='bx bx-export'></i><span>Export Chat</span>
+                    </a>
+                    <a href="#" class="set-list" id="theme-toggle-btn">
+                        <i class='bx bx-sun'></i><span>Toggle Theme</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Center Chat Area -->
+        <section class="center">
+            <div class="chat-area">
+                <div class="hello-text">
+                    <h1>Hello, <span class="usname">there!</span></h1>
+                    <samp>How can I help you today?
+                        <img class="robot" src="robot.jpg" alt="Robot Icon">
+                    </samp>
+                </div>
+                <div class="result" id="chat-result" role="log" aria-live="polite">
+                    <!-- Chat messages will be appended here -->
+                </div>
+            </div>
+            
+            <div class="input-container">
+                <form class="inarea" id="chat-form">
+                    <div class="icons_group">
+                       <div class="icon-left">
+                           <i id="phone" class='bx bxs-microphone' title="Start voice input" role="button" aria-label="Start voice input"></i>
+                           <i class='bx bx-paperclip' title="Attach file"></i>
+                           <input type="text" placeholder="Message Pink..." autocomplete="off">
+                           <button type="submit" class="send-btn" aria-label="Send Message">
+                               <i class='bx bx-paper-plane'></i>
+                           </button>
+                       </div>
+                    </div>
+                </form>
+                <p class="morul">Pink can make mistakes. Consider checking important information.</p>
+            </div>
+        </section>
+
+        <!-- Right Sidebar -->
+        <aside class="right">
+            <div class="right-end">
+                <div class="tools">
+                    <i id="tools-toggle" class='bx bx-category' title="Tools"></i>
+                </div>
+                <div class="profile">
+                    <img id="user-toggle" src="robot.jpg" alt="User Profile">
+                </div>
+            </div>
+            <div class="drop-end">
+                <!-- CORRECTED THIS SECTION -->
+                <nav class="tool" id="tools-menu">
+                     <a href="maths.html" class="tool-list">
+                        <i class='bx bx-calculator'></i><span>Maths problem</span>
+                    </a>
+                    <a href="image.html" class="tool-list">
+                        <i class='bx bx-image-add'></i><span>Image Generator</span>
+                    </a>
+                </nav>
+                <!-- END OF CORRECTION -->
+                <nav class="user-drop" id="user-menu">
+                    <div class="user-ld">
+                        <img src="robot.jpg" alt="User Profile Large">
+                        <h3>User Name</h3>
+                        <div class="email"><p>user@example.com</p></div>
+                        <hr>
+                        <a href="#"><span><i class='bx bx-user'></i><p>My Profile</p></span></a>
+                        <a href="#"><span><i class='bx bx-log-out'></i><p>Log Out</p></span></a>
+                    </div>
+                </nav>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.1/math.min.js"></script>
+    <script src="pink.js" defer></script>
+</body>
+</html>
