@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CONFIG = {
         // WARNING: Do NOT expose API keys in client-side code for production applications.
         // Use a backend proxy server to protect your keys.
-        GEMINI_API_KEY: 'Your_Gemini_API_Key_Here',
+        GEMINI_API_KEY: 'AIzaSyCiMMMghZmGr1uj2McJvd6JbzlyZlsI5KU',
         HUGGINGFACE_API_KEY: 'your_huggingface_api_key_here',
         MAX_CHAT_HISTORY: 50,
         TYPING_SPEED: 20, // Faster typing speed for better UX
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const userHtml = `
             <div class="resultTitle">
                 <p>${text}</p>
-                <img src="robot.jpg" alt="User Icon">
+                <img src="img/chat.jpg" alt="User Icon">
             </div>`;
         dom.resultArea.innerHTML += userHtml;
         smoothScrollToBottom();
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const aiHtml = `
             <div class="resultres">
-                <img src="robot.jpg" alt="AI Icon">
+                <img src="img/chat.jpg" alt="AI Icon">
                 <div class="response-text"></div>
             </div>`;
         dom.resultArea.insertAdjacentHTML('beforeend', aiHtml);
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showTypingIndicator = () => {
         const indicatorHtml = `
             <div class="resultres typing-indicator">
-                 <img src="robot.jpg" alt="AI Icon">
+                 <img src="img/chat.jpg" alt="AI Icon">
                  <span></span><span></span><span></span>
             </div>`;
         dom.resultArea.innerHTML += indicatorHtml;

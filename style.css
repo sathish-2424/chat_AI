@@ -154,6 +154,73 @@
     pointer-events: auto;
 }
 
+/* Add box-shadow for depth */
+.image-generator,
+.image-gallery .img-card {
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10), 0 1.5px 4px rgba(0,0,0,0.08);
+    transition: box-shadow 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+.image-gallery .img-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 3px 8px rgba(0,0,0,0.12);
+}
+
+/* Smooth transitions for interactive elements */
+.generate-form .prompt-input,
+.generate-form .generate-btn {
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.generate-form .prompt-input:focus {
+    background: #f3f3f3;
+    box-shadow: 0 0 0 2px #ff6347;
+}
+
+.generate-form .generate-btn:focus {
+    outline: 2px solid #ff6347;
+    outline-offset: 2px;
+}
+
+/* Loading spinner animation */
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+
+.image-gallery .img-card.loading img {
+    width: 60px;
+    height: 60px;
+    opacity: 0.7;
+    filter: grayscale(1);
+    animation: spinner 1s linear infinite;
+}
+
+/* Improve accessibility for buttons */
+.generate-form .generate-btn {
+    box-shadow: 0 2px 8px rgba(255,99,71,0.08);
+}
+.generate-form .generate-btn:active {
+    background: #b92d06;
+}
+
+/* Responsive improvements */
+@media screen and (max-width: 400px) {
+    .image-generator h1 {
+        font-size: 1.3rem;
+    }
+    .image-gallery .img-card {
+        padding: 0;
+        width: 100%;
+    }
+    .image-generator .content {
+        padding: 0 5px;
+    }
+}
+
+/* Subtle hover for input */
+.generate-form .prompt-input:hover {
+    background: #f8f8f8;
+}
+
 @media screen and (max-width: 760px){
     .image-generator{
         height: 45vh;
