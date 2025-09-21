@@ -4,7 +4,7 @@ const promptInput = document.querySelector(".prompt-input");
 const imageGallery = document.querySelector(".image-gallery");
 
 // Replace with your actual API key
-const KEY = "your_huggingface_api_key_here"; 
+const KEY = "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"; 
 let isImageGenerating = false;
 
 const updateImageCard = (srcUrl) => {
