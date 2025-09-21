@@ -46,9 +46,7 @@
             <div class="chat-area">
                 <div class="hello-text">
                     <h1>Hello, <span class="usname">there!</span></h1>
-                    <samp>How can I help you today?
-<!--                         <img class="robot" src="img/chat.jpg" alt="Robot Icon"> -->
-                    </samp>
+                    <samp>How can I help you today?</samp>
                 </div>
                 <div class="result" id="chat-result" role="log" aria-live="polite">
                     <!-- Chat messages will be appended here -->
@@ -58,14 +56,12 @@
             <div class="input-container">
                 <form class="inarea" id="chat-form">
                     <div class="icons_group">
-                       <div class="icon-left">
-<!--                            <i id="phone" class='bx bxs-microphone' title="Start voice input" role="button" aria-label="Start voice input"></i> -->
-<!--                            <i class='bx bx-paperclip' title="Attach file"></i> -->
-                           <input type="text" placeholder="Message Pink..." autocomplete="off">
-                           <button type="submit" class="send-btn" aria-label="Send Message">
-                               <i class='bx bx-paper-plane'></i>
-                           </button>
-                       </div>
+                        <div class="icon-left">
+                            <input type="text" placeholder="Message Pink..." autocomplete="off" id="chat-input">
+                            <button type="submit" class="send-btn" aria-label="Send Message">
+                                <i class='bx bx-paper-plane'></i>
+                            </button>
+                        </div>
                     </div>
                 </form>
                 <p class="morul">Pink can make mistakes. Consider checking important information.</p>
@@ -82,28 +78,16 @@
                     <img id="user-toggle" src="img/Profile.png" alt="User Profile">
                 </div>
             </div>
-            <div class="drop-end">
-                <!-- CORRECTED THIS SECTION -->
-                <nav class="tool" id="tools-menu">
+            <div class="drop-end" id="tools-menu">
+                <nav class="tool">
                      <a href="maths.html" class="tool-list">
                         <i class='bx bx-calculator'></i><span>Maths problem</span>
                     </a>
                 </nav>
-                 <nav class="tool" id="tools-menu">
+                <nav class="tool">
                      <a href="image.html" class="tool-list">
                         <i class='bx bx-image'></i><span>Image Tools</span>
                     </a>
-                </nav>
-                <!-- END OF CORRECTION -->
-                <nav class="user-drop" id="user-menu">
-                    <div class="user-ld">
-                        <img src="img/Profile.png" alt="User Profile Large">
-                        <!-- <h3>User Name</h3>
-                        <div class="email"><p>user@example.com</p></div> -->
-                        <hr>
-                        <!-- <a href="#"><span><i class='bx bx-user'></i><p>My Profile</p></span></a>
-                        <a href="#"><span><i class='bx bx-log-out'></i><p>Log Out</p></span></a> -->
-                    </div>
                 </nav>
             </div>
         </aside>
