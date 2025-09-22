@@ -1,261 +1,196 @@
+/* --------------------------------------------------------------
+   Configuration
+   -------------------------------------------------------------- */
+// 1️⃣ Your personal Hugging Face inference token (starts with "hf_")
+const API_KEY = "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"; // IMPORTANT: Replace with your actual key
+
+// 2️⃣ Primary model – we are using SDXL Base
+const MAIN_MODEL_URL = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+
+// Optional fallback (kept as a safety net)
+const ALT_MODEL_URL = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
+
+/* --------------------------------------------------------------
+   DOM references
+   -------------------------------------------------------------- */
 const generateForm = document.querySelector(".generate-form");
 const generateBtn = generateForm.querySelector(".generate-btn");
-const promptInput = document.querySelector(".prompt-input");
+const promptInput = generateForm.querySelector(".prompt-input");
 const imageGallery = document.querySelector(".image-gallery");
 
-// Replace with your actual API key
-const KEY = "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"; 
-let isImageGenerating = false;
+/* --------------------------------------------------------------
+   Helper UI functions
+   -------------------------------------------------------------- */
+function setLoadingState(isLoading) {
+    if (isLoading) {
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Generating...";
+    } else {
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate";
+    }
+}
 
-const updateImageCard = (srcUrl) => {
-    const imgCard = document.querySelector(".img-card");
-    const imgElement = imgCard.querySelector("img");
-    const downloadBtn = imgCard.querySelector(".download-btn");
-
-    imgElement.src = srcUrl;
-   
-    imgElement.onload = () => {
-        imgCard.classList.remove("loading");
-        downloadBtn.setAttribute("href", srcUrl);
-        downloadBtn.setAttribute("download", `${promptInput.value}.jpg`);
-    };
-
-    // Handle image load errors
-    imgElement.onerror = () => {
-        showError("Failed to load generated image");
-        resetGenerateButton();
-    };
-};
-
-const showError = (message) => {
-    console.error("Error:", message);
-    const errorMarkup = `
+/* Show a nice error card */
+function showError(message) {
+    const markup = `
         <div class="img-card error">
             <div class="error-message">
                 <h3>Error</h3>
                 <p>${message}</p>
             </div>
-        </div>
-    `;
-    imageGallery.innerHTML = errorMarkup;
-};
+        </div>`;
+    imageGallery.innerHTML = markup;
+}
 
-const resetGenerateButton = () => {
-    generateBtn.removeAttribute("disabled");
-    generateBtn.innerText = "Generate";
-    isImageGenerating = false;
-};
-
-const query = async () => {
-    try {
-        console.log("Starting API request...");
-        console.log("Prompt:", promptInput.value);
-        console.log("API Key (first 10 chars):", KEY.substring(0, 10) + "...");
-        
-        // Try the most reliable model first
-        const apiUrl = "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
-        
-        console.log("API URL:", apiUrl);
-        
-        const requestBody = {
-            "inputs": promptInput.value,
-            "parameters": {
-                "num_inference_steps": 20,
-                "guidance_scale": 7.5
-            }
-        };
-        
-        console.log("Request body:", JSON.stringify(requestBody));
-
-        const response = await fetch(apiUrl, {
-            headers: {
-                Authorization: `Bearer ${KEY}`,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify(requestBody),
-        });
-
-        console.log("Response status:", response.status);
-        console.log("Response headers:", response.headers);
-        
-        // Get response text for debugging
-        const responseText = await response.text();
-        console.log("Response text:", responseText);
-
-        // Check if the response is ok
-        if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error("❌ Invalid API key. Please check your token at https://huggingface.co/settings/tokens");
-            } else if (response.status === 429) {
-                throw new Error("⏰ Rate limit exceeded. Please try again in a few minutes.");
-            } else if (response.status === 400) {
-                throw new Error("🚫 Invalid prompt. Try a simpler description like 'red apple' or 'blue sky'.");
-            } else if (response.status === 404) {
-                throw new Error("❓ Model not found. Trying alternative model...");
-            } else if (response.status === 503) {
-                throw new Error("⏳ Model is loading. Please wait 30 seconds and try again.");
-            } else {
-                throw new Error(`🔥 API Error: ${response.status} - ${response.statusText}\nResponse: ${responseText}`);
-            }
-        }
-
-        // Try to parse as blob
-        const blob = new Blob([responseText], { type: 'image/jpeg' });
-        
-        console.log("Blob size:", blob.size);
-        
-        // Check if we actually got an image
-        if (blob.size === 0) {
-            throw new Error("No image data received from API");
-        }
-
-        return blob;
-
-    } catch (error) {
-        console.error("API Error Details:", error);
-        throw error;
-    }
-};
-
-// Alternative query function with different model
-const queryAlternative = async () => {
-    try {
-        console.log("Trying alternative model...");
-        const response = await fetch(
-            "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-            {
-                headers: {
-                    Authorization: `Bearer ${KEY}`,
-                    "Content-Type": "application/json",
-                },
-                method: "POST",
-                body: JSON.stringify({
-                    "inputs": promptInput.value
-                }),
-            }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Alternative model failed: ${response.status}`);
-        }
-
-        const result = await response.blob();
-        return result;
-    } catch (error) {
-        console.error("Alternative model error:", error);
-        throw error;
-    }
-};
-
-const generateAiImages = async () => {
-    try {
-        console.log("=== Starting image generation ===");
-        
-        // Try main model first
-        let response;
-        try {
-            response = await query();
-        } catch (error) {
-            console.log("Main model failed, trying alternative...");
-            response = await queryAlternative();
-        }
-        
-        const objectURL = URL.createObjectURL(response);
-        console.log("Generated image URL:", objectURL);
-        updateImageCard(objectURL);
-        resetGenerateButton();
-        
-    } catch (error) {
-        console.error("Generation failed:", error);
-        showError(error.message);
-        resetGenerateButton();
-    }
-};
-
-const handleImageGeneration = (e) => {
-    e.preventDefault();
-    
-    console.log("=== Image generation started ===");
-    
-    // Prevent multiple simultaneous requests
-    if (isImageGenerating) {
-        console.log("Already generating, skipping...");
-        return;
-    }
-
-    // Validate input
-    const prompt = promptInput.value.trim();
-    if (!prompt) {
-        showError("Please enter a description for the image you want to generate.");
-        return;
-    }
-
-    // Check API key
-    if (!KEY || KEY === "Your api key here") {
-        showError("Please add your Hugging Face API key to use this generator.");
-        return;
-    }
-
-    console.log("Validation passed, starting generation...");
-
-    // Set loading state
-    generateBtn.setAttribute("disabled", true);
-    generateBtn.innerText = "Generating...";
-    isImageGenerating = true;
-
-    // Create loading card
-    const imgCardMarkup = `
+/* Insert a loading card while we wait for the API */
+function showLoadingCard() {
+    const markup = `
         <div class="img-card loading">
-            <img src="images/loader.svg" alt="AI generated image">
-            <a class="download-btn" href="#" >
+            <img src="images/loader.svg" alt="loading spinner">
+            <a class="download-btn" href="#">
                 <img src="images/download.svg" alt="download icon">
             </a>
-        </div>
-    `;
+        </div>`;
+    imageGallery.innerHTML = markup;
+}
 
-    imageGallery.innerHTML = imgCardMarkup;
-    
-    // Generate image
-    generateAiImages();
-};
+/* Update the displayed image and enable download */
+function updateImageCard(blobUrl) {
+    const imgCard = document.querySelector(".img-card");
+    const imgEl = imgCard.querySelector("img");
+    const dlBtn = imgCard.querySelector(".download-btn");
 
-// Test API key validity on page load
-const testApiKey = async () => {
-    try {
-        console.log("Testing API key...");
-        const response = await fetch("https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5", {
-            headers: {
-                Authorization: `Bearer ${KEY}`,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({"inputs": "test"}),
-        });
-        
-        console.log("API key test response:", response.status);
-        
-        if (response.status === 401) {
-            showError("❌ Invalid API key detected. Please check your token.");
-        } else if (response.status === 503) {
-            console.log("✅ API key is valid, model is loading");
-        } else {
-            console.log("✅ API key appears to be valid");
+    imgEl.src = blobUrl;
+
+    imgEl.onload = () => {
+        imgCard.classList.remove("loading");
+        dlBtn.href = blobUrl;
+        dlBtn.download = `${promptInput.value.trim() || "generated"}.jpg`;
+    };
+
+    imgEl.onerror = () => {
+        showError("Failed to load the generated image.");
+        setLoadingState(false);
+    };
+}
+
+/* --------------------------------------------------------------
+   API calls
+   -------------------------------------------------------------- */
+async function callModel(url) {
+    const payload = {
+        inputs: promptInput.value.trim(),
+        parameters: { num_inference_steps: 20, guidance_scale: 7.5 }
+    };
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${API_KEY}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+        const txt = await response.text(); // Capture error body for debugging
+        // Build a helpful error based on status code
+        switch (response.status) {
+            case 401: throw new Error("❌ Invalid API key. Check your token at https://huggingface.co/settings/tokens");
+            case 429: throw new Error("⏰ Rate limit exceeded. Try again in a minute.");
+            case 400: throw new Error("🚫 Bad request – maybe the prompt is too long or malformed.");
+            case 404: throw new Error("❓ Model not found. (Will try an alternative.)");
+            case 503: throw new Error("⏳ Model is loading. Wait a few seconds and retry.");
+            default: throw new Error(`🔥 API error ${response.status}: ${txt}`);
         }
-    } catch (error) {
-        console.error("API key test failed:", error);
     }
-};
 
-// Add event listeners
-generateForm.addEventListener("submit", handleImageGeneration);
+    // The endpoint returns raw image bytes → read as Blob
+    const blob = await response.blob();
 
-// Optional: Add Enter key support for input field
-promptInput.addEventListener("keypress", (e) => {
+    if (!blob.type.startsWith("image/") || blob.size === 0) {
+        throw new Error("Received an empty or non-image response from the model.");
+    }
+    return blob;
+}
+
+/* Try main model first, fall back to alternative if appropriate */
+async function generateImage() {
+    try {
+        // Primary model
+        return await callModel(MAIN_MODEL_URL);
+    } catch (err) {
+        // If the failure is due to the model itself (404/503), try the alternative
+        if (err.message.includes("404") || err.message.includes("503")) {
+            console.warn("Primary model failed – attempting alternative model.", err);
+            return await callModel(ALT_MODEL_URL);
+        }
+        // Otherwise re-throw – it’s probably an auth or rate-limit issue
+        throw err;
+    }
+}
+
+/* --------------------------------------------------------------
+   Event handling
+   -------------------------------------------------------------- */
+async function handleSubmit(event) {
+    event.preventDefault();
+
+    // 1️⃣ Validation
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+        showError("Please type a description for the image you’d like to generate.");
+        return;
+    }
+    if (!API_KEY || API_KEY.startsWith("YOUR_")) {
+        showError("A valid Hugging Face API key is required. Insert it in script.js.");
+        return;
+    }
+
+    // 2️⃣ UI preparation
+    setLoadingState(true);
+    showLoadingCard();
+
+    // 3️⃣ Call the model(s)
+    try {
+        const imageBlob = await generateImage();
+        const blobUrl = URL.createObjectURL(imageBlob);
+        updateImageCard(blobUrl);
+    } catch (err) {
+        console.error(err);
+        showError(err.message);
+    } finally {
+        setLoadingState(false);
+    }
+}
+
+/* ------------------------------------------------------------------
+   Attach listeners
+   ------------------------------------------------------------------ */
+generateForm.addEventListener("submit", handleSubmit);
+
+/* Optional: allow pressing Enter while focused on the input */
+promptInput.addEventListener("keypress", e => {
     if (e.key === "Enter") {
-        handleImageGeneration(e);
-    }
+		e.preventDefault(); // Prevent form submission if it's not already handled
+		handleSubmit(e);
+	}
 });
 
-// Test API key when page loads
+/* ------------------------------------------------------------------
+   Optional: quick test of the API key on page load (helps debug)
+   ------------------------------------------------------------------ */
+async function testApiKey() {
+    if (!API_KEY || API_KEY.startsWith("YOUR_")) return; // skip placeholder
+    try {
+        const resp = await fetch("https://huggingface.co/api/whoami", {
+            headers: { Authorization: `Bearer ${API_KEY}` }
+        });
+        if (!resp.ok) throw new Error(`Status ${resp.status}`);
+        console.log("✅ API key works!");
+    } catch (e) {
+        console.warn("API key test failed:", e);
+    }
+}
 window.addEventListener("load", testApiKey);
